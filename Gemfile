@@ -32,6 +32,9 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+# angular
+gem 'angularjs-rails'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
