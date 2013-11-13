@@ -1,2 +1,49 @@
-<h1>AngularUsers#index</h1>
-<p>Find me in app/views/angular_users/index.html.erb</p>
+<div ng-app="userApp" ng-controller="UserCtrl">
+  <%- model_class = User -%>
+  <div class="page-header">
+    <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+    <form class="form-inline" role="form">
+      <div class="form-group">
+        <input type="text" class="form-control" id="search" placeholder="Search" ng-model="query">
+        <label for="orderProp">Order by:</label>
+        <select class="form-control" ng-model="orderProp" name="orderProp">
+          <option value="name">Name</option>
+          <option value="last_name">Last Name</option>
+          <option value="created_at">Creation Date</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:id) %></th>
+      <th><%= model_class.human_attribute_name(:name) %></th>
+      <th><%= model_class.human_attribute_name(:last_name) %></th>
+      <th><%= model_class.human_attribute_name(:birth_date) %></th>
+      <th><%= model_class.human_attribute_name(:address) %></th>
+      <th><%= model_class.human_attribute_name(:phone_number) %></th>
+      <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <th><%=t '.actions', :default => t("helpers.actions") %></th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="user in users | filter:query | orderBy:orderProp">
+        <td>{{user.id}}</td>
+        <td>{{user.name}}</td>
+        <td>{{user.last_name}}</td>
+        <td>{{user.birth_date}}</td>
+        <td>{{user.address}}</td>
+        <td>{{user.phone_number}}</td>
+        <td>{{user.created_at}}</td>
+        <td>
+          <%= angularize_link link_to t('.edit', :default => t("helpers.links.edit")), edit_user_path('ID'), :class => 'btn btn-mini' %>
+          <%= angularize_link link_to t('.destroy', :default => t("helpers.links.destroy")), user_path('ID'), :method => :delete, :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) }, :class => 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <%= link_to t('.new', :default => t("helpers.links.new")), new_user_path, :class => 'btn btn-primary' %>
+
+</div>
