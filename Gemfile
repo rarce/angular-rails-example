@@ -35,6 +35,9 @@ end
 # angular
 gem 'angularjs-rails'
 
+# bootstrap
+gem 'twitter-bootstrap-rails'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
