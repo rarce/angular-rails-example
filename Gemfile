@@ -38,6 +38,8 @@ gem 'angularjs-rails'
 # bootstrap
 gem 'twitter-bootstrap-rails'
 
+gem 'quiet_assets', :group => :development
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
