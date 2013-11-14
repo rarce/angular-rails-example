@@ -1,35 +1,33 @@
-<div ng-app="userApp" ng-controller="UserCtrl">
-  <%- model_class = User -%>
+<div ng-app="userApp" ng-controller="ListCtrl">
   <div class="page-header">
-    <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
-    <form class="form-inline" role="form">
-      <div class="form-group">
-        <input type="text" class="form-control" id="search" placeholder="Search" ng-model="query">
-        <label for="orderProp">Order by:</label>
-        <select class="form-control" ng-model="orderProp" name="orderProp">
-          <option value="name">Name</option>
-          <option value="last_name">Last Name</option>
-          <option value="created_at">Creation Date</option>
-        </select>
-      </div>
-    </form>
+    <h1>Users</h1>
   </div>
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th><%= model_class.human_attribute_name(:id) %></th>
-      <th><%= model_class.human_attribute_name(:name) %></th>
-      <th><%= model_class.human_attribute_name(:last_name) %></th>
-      <th><%= model_class.human_attribute_name(:birth_date) %></th>
-      <th><%= model_class.human_attribute_name(:address) %></th>
-      <th><%= model_class.human_attribute_name(:phone_number) %></th>
-      <th><%= model_class.human_attribute_name(:created_at) %></th>
-      <th><%=t '.actions', :default => t("helpers.actions") %></th>
-    </tr>
-    </thead>
-    <tbody>
+  <script type="text/ng-template" id="list.html">
+    <form class="form-inline" role="form">
+    <div class="form-group">
+      <input type="text" class="form-control" id="search" placeholder="Search" ng-model="query">
+      <label for="orderProp">Order by:</label>
+      <select class="form-control" ng-model="orderProp" name="orderProp">
+        <option value="name">Name</option>
+        <option value="last_name">Last Name</option>
+        <option value="created_at">Creation Date</option>
+      </select>
+    </div>
+    </form>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Last Name</th>
+        <th>Birth Date</th>
+        <th>Address</th>
+        <th>Phone Number</th>
+        <th>Created At</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
       <tr ng-repeat="user in users | filter:query | orderBy:orderProp">
-        <td>{{user.id}}</td>
         <td>{{user.name}}</td>
         <td>{{user.last_name}}</td>
         <td>{{user.birth_date}}</td>
@@ -37,13 +35,90 @@
         <td>{{user.phone_number}}</td>
         <td>{{user.created_at}}</td>
         <td>
-          <%= angularize_link link_to t('.edit', :default => t("helpers.links.edit")), edit_user_path('ID'), :class => 'btn btn-mini' %>
-          <%= angularize_link link_to t('.destroy', :default => t("helpers.links.destroy")), user_path('ID'), :method => :delete, :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) }, :class => 'btn btn-mini btn-danger' %>
+          <a href="#/users/{{user.id}}/edit" class="btn btn-mini">Edit</a>
+          <a ng-click="deleteUser(user.id)" class="btn btn-mini btn-danger">Delete</a>
         </td>
       </tr>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
 
-  <%= link_to t('.new', :default => t("helpers.links.new")), new_user_path, :class => 'btn btn-primary' %>
+    <a href="#/new" class="btn btn-primary">New</a>
+  </div>
+  </script>
+
+  <script type="text/ng-template" id="show.html">
+      <dl class="dl-horizontal">
+        <dt><strong>Name:</strong></dt>
+        <dd>{{user.name}}</dd>
+        <dt><strong>Last Name:</strong></dt>
+        <dd>{{user.last_name}}</dd>
+        <dt><strong>Birth Date:</strong></dt>
+        <dd>{{user.birth_date}}</dd>
+        <dt><strong>Address:</strong></dt>
+        <dd>{{user.address }}</dd>
+        <dt><strong>Phone number:</strong></dt>
+        <dd>{{user.phone_number }}</dd>
+      </dl>
+
+      <div class="form-actions">
+        <a ng-click="cancel()" href="#/users" class="btn">Back</a>
+        <a ng-click="editUser(user.id)" href="#/users/{{user.id}}/edit" class="btn">Edit</a>
+        <a ng-click="deleteUser(user.id)" href="#/users/{{user.id}}" class="btn btn-danger">Delete</a>
+      </div>
+  </script>
+
+  <script type="text/ng-template" id="form.html">
+      <form action="" class="form-horizontal">
+        <div class="control-group">
+          <label for="name" class="control-label">Name</label>
+          <div class="controls">
+            <input type="text" name="name" ng-model="user.name" class="text_field"/>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="last_name" class="control-label">Last Name</label>
+          <div class="controls">
+            <input type="text" name="last_name" ng-model="user.last_name" class="text_field"/>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="birth_date" class="control-label">Birth date</label>
+          <div class="controls">
+            <input type="text" name="birth_date"  ng-model="user.birth_date" class="text_field"/>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="address" class="control-label">Address</label>
+          <div class="controls">
+            <input type="text" name="address" ng-model="user.address" class="text_field"/>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="phone_number" class="control-label">Phone number</label>
+          <div class="controls">
+            <input type="text" name="phone_number" ng-model="user.phone_number" class="text_field"/>
+          </div>
+        </div>
+      </form>
+  </script>
+
+  <script type="text/ng-template" id="new.html">
+    <ng-include src="'form.html'"></ng-include>
+    <div class="form-actions">
+        <input ng-click="createNewUser()" type="submit" class="btn btn-primary" value="Create" />
+        <a href="#/users" class="btn">Cancel</a>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="edit.html">
+    <ng-include src="'form.html'"></ng-include>
+    <div class="form-actions">
+        <input ng-click="updateUser()" type="submit" class="btn btn-primary" value="Edit" />
+        <a href="#/users" class="btn">Cancel</a>
+    </div>
+  </script>
+
+  <div ng-view>
+  </div>
 
 </div>
